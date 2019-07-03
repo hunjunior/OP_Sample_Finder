@@ -1,0 +1,119 @@
+body {
+    background-color: #2f2b2b;
+    color: #c3c3c3;
+}
+
+
+/* .wavesurfer-region {
+    background-color: rgba(108, 108, 132, 0.39) !important;
+} */
+
+button, select{
+    border-radius: 3px;
+    height: 30px;
+    width: 100px;
+    border: solid 1px;
+    background: transparent;
+    margin: 5px;
+    border-color: white;
+    color: white;
+}
+
+button:disabled {
+    border-color: #7d7878;
+    color: #7d7878;
+}
+
+select {
+color: #c3c3c3
+}
+
+option {
+    color: black;
+}
+
+#sample-counter {
+    font-size: larger;
+    padding: 0 150px;
+    font-weight: bold;
+}
+
+#panel-0 {
+    width: 100%;
+    height: 10vh;
+}
+
+#panel-1 {
+    width: 100%;
+    height: 25vh;
+}
+
+#panel-2 {
+    width: 100%;
+    height: 20vh;
+}
+
+#panel-3 {
+    width: 100%;
+    height: 10vh;
+}
+
+#panel-4 {
+    width: 100%;
+    height: 25vh;
+}
+
+#waveform {
+    display: inline-block;
+    float: left;
+    width: 75%;
+    /* padding: 1vh 1vh; */
+    border: solid 1px #f57047;
+}
+
+#upload-msg {
+    color: #ffffff;
+    display: inline-block;
+    margin-left: 2vw;
+}
+
+#sample-btn-holder {
+    display: inline-block;
+    float: right;
+    margin: 0 1vw 0 0;
+    width: 20%;
+}
+
+#loading-msg {
+    margin: 10px 5px;
+}
+
+
+#melodic-btn-holder {
+
+}
+
+#waveform-zoom {
+    display: inline-block;
+    float: left;
+    width: 75%;
+    padding-bottom: 3px;
+    border: solid 1px #6f6f6f;
+}
+
+#save-btn-holder{
+    display: inline-block;
+    float: right;
+    margin: 0 1vw 0 0;
+    width: 20%;
+}
+
+wave::-webkit-scrollbar {
+    height: 5px;
+}
+
+wave::-webkit-scrollbar-thumb {
+    background-color: #518e53;
+
+}
+

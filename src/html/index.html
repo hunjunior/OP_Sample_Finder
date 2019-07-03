@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>OP Sample finder</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+  <div id="panel-0">
+    <input type="file" id="fileUpload">
+    <div id="upload-msg"></div>
+  </div>
+
+
+  <div id="panel-1">
+    <div id="waveform"></div>
+    <div id="sample-btn-holder">
+      <div id="melodic-btn-holder">
+        <button id="get-loop-samples-btn" disabled>Loop samples</button>
+        <select id="treshold-select">
+          <option value=0.35>35%</option>
+          <option value=0.40>40%</option>
+          <option value=0.45>45%</option>
+          <option value=0.50 selected="selected">50%</option>
+          <option value=0.55>55%</option>
+          <option value=0.60>60%</option>
+        </select>
+      </div>
+      <button id="get-drum-samples-btn" disabled>Drum samples</button>
+      <p id="loading-msg"></p>
+    </div>
+  </div>
+
+  <div id="panel-2">
+    <button disabled class="sample-btn" id="prev-btn">Previous</button>
+    <div id="time-vals" style="display:inline"></div>
+    <button disabled class="sample-btn" id="next-btn">Next</button>
+    <button disabled class="sample-btn" id="edit-in-zoom-btn">Edit</button>
+    <p id="sample-counter"><span id="current-index"></span> / <span id="all-index"></span></p>
+  </div>
+
+  <div id="panel-3">
+    <button disabled class="sample-btn" id="sample-play-stop-btn">Play</button>
+    <button disabled class="sample-btn" id="sample-play-btn">Play</button>
+    <button disabled class="sample-btn" id="sample-stop-btn">Stop</button>
+  </div>
+
+  <div id="panel-4">
+    <div id="waveform-zoom"></div>
+    <div id="save-btn-holder">
+      <button id="save-sample-btn" disabled>Add sample</button>
+    </div>
+  </div>
+
+
+  <script src="https://unpkg.com/wavesurfer.js"></script>
+  <script src="https://unpkg.com/wavesurfer.js/dist/plugin/wavesurfer.regions.min.js"></script>
+</body>
+
+<script>
+  require('../js/renderer.js')
+</script>
+
+</html>
