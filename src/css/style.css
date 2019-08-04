@@ -1,6 +1,17 @@
 body {
-    background-color: #2f2b2b;
-    color: #c3c3c3;
+    background-color: #58595F;
+    color: #C7C7C7;
+}
+
+#waveform-final region {
+    border-right: 1px solid white;
+    z-index: 3 !important
+}
+
+#waveform-zoom region {
+    border-right: 1px solid white;
+    border-left: 1px solid white;
+    z-index: 3 !important
 }
 
 
@@ -45,22 +56,78 @@ option {
 
 #panel-1 {
     width: 100%;
-    height: 25vh;
+    height: 22vh;
 }
 
 #panel-2 {
     width: 100%;
-    height: 20vh;
+    height: 22vh;
+}
+
+#zoom-sample-length-msg {
+    margin: 5px;
+    background: black;
+    font-weight: bold;
+    height: 4vh;
+    display: flex;
+    align-items: center;
+    padding-left: 5px;
+    border: solid 1px #6f6f6f;
 }
 
 #panel-3 {
     width: 100%;
-    height: 10vh;
+    height: 22vh;
+}
+
+#final-sample-length-msg {
+    margin: 5px;
+    background: black;
+    color: #518e53;
+    font-weight: bold;
+    height: 4vh;
+    display: flex;
+    align-items: center;
+    padding-left: 5px;
+    border: solid 1px #6f6f6f;
 }
 
 #panel-4 {
+    height: 21vh;
+}
+
+#opz-keyboard-layer-1 {
+    height: 15.59vh;
+    width: 127vh;
+    font-size: 0;
+    position: relative;
+    border: solid 1px #C7C7C7;
+}
+
+#opz-keyboard-layer-2 {
     width: 100%;
-    height: 25vh;
+    height: 100%;
+    position: absolute;
+    background: url("../images/opz-keyboard.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    pointer-events: none;
+}
+
+.opz-key-background {
+    width: 3.5714%;
+    height: 100%;
+    display: inline-block;
+}
+
+.black-key {
+    background-color: #C7C7C7;
+    /* background-color: #89bd82; */
+}
+
+.white-key {
+    background-color: #58595F;
+    /* background-color: #4e6d49; */
 }
 
 #waveform {
@@ -75,6 +142,16 @@ option {
     color: #ffffff;
     display: inline-block;
     margin-left: 2vw;
+}
+
+#upload-field {
+    width: 30vw;
+    height: 8vh;
+    border: solid 1px #6f6f6f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
 }
 
 #sample-btn-holder {
@@ -99,6 +176,20 @@ option {
     width: 75%;
     padding-bottom: 3px;
     border: solid 1px #6f6f6f;
+}
+
+#waveform-final {
+    display: inline-block;
+    float: left;
+    width: 75%;
+    border: solid 1px #6f6f6f;
+}
+
+#keep-btn-holder{
+    display: inline-block;
+    float: right;
+    margin: 0 1vw 0 0;
+    width: 20%;
 }
 
 #save-btn-holder{

@@ -9,7 +9,18 @@
 
 <body>
   <div id="panel-0">
-    <input type="file" id="fileUpload">
+    <input type="file" id="file-upload" style="display: none">
+    <div style="display: inline-block">
+      <div id="upload-field">
+        <div style="text-align: center">
+          Click to open or drag&drop
+          <br>
+          <b>
+            <span id="upload-field-msg"></span>
+          </b>
+        </div>
+      </div>
+    </div>
     <div id="upload-msg"></div>
   </div>
 
@@ -34,23 +45,51 @@
   </div>
 
   <div id="panel-2">
-    <button disabled class="sample-btn" id="prev-btn">Previous</button>
-    <div id="time-vals" style="display:inline"></div>
-    <button disabled class="sample-btn" id="next-btn">Next</button>
-    <button disabled class="sample-btn" id="edit-in-zoom-btn">Edit</button>
-    <p id="sample-counter"><span id="current-index"></span> / <span id="all-index"></span></p>
+    <div id="waveform-zoom"></div>
+    <div id="keep-btn-holder">
+      <button id="keep-sample-btn" disabled>Add sample</button>
+      <div id="zoom-sample-length-msg">0.0 sec</div>
+    </div>
   </div>
 
   <div id="panel-3">
-    <button disabled class="sample-btn" id="sample-play-stop-btn">Play</button>
-    <button disabled class="sample-btn" id="sample-play-btn">Play</button>
-    <button disabled class="sample-btn" id="sample-stop-btn">Stop</button>
+    <div id="waveform-final"></div>
+    <div id="save-btn-holder">
+      <button id="save-sample-btn" disabled>Save</button>
+      <div id="final-sample-length-msg">0.0 / 12 sec</div>
+    </div>
   </div>
 
   <div id="panel-4">
-    <div id="waveform-zoom"></div>
-    <div id="save-btn-holder">
-      <button id="save-sample-btn" disabled>Add sample</button>
+    <div id="opz-keyboard-layer-1">
+      <div id="opz-keyboard-layer-2"></div>
+      <div color="white" class="opz-key-background white-key" style="margin-left: 1.7857%"></div>
+      <div color="black" class="opz-key-background black-key"></div>
+      <div color="white" class="opz-key-background white-key"></div>
+      <div color="black" class="opz-key-background black-key"></div>
+      <div color="white" class="opz-key-background white-key"></div>
+      <div color="black" class="opz-key-background black-key"></div>
+      <div color="white" class="opz-key-background white-key"></div>
+      <div class="opz-key-background"></div>
+      <div color="white" class="opz-key-background white-key"></div>
+      <div color="black" class="opz-key-background black-key"></div>
+      <div color="white" class="opz-key-background white-key"></div>
+      <div color="black" class="opz-key-background black-key"></div>
+      <div color="white" class="opz-key-background white-key"></div>
+      <div class="opz-key-background"></div>
+      <div color="white" class="opz-key-background white-key"></div>
+      <div color="black" class="opz-key-background black-key"></div>
+      <div color="white" class="opz-key-background white-key"></div>
+      <div color="black" class="opz-key-background black-key"></div>
+      <div color="white" class="opz-key-background white-key"></div>
+      <div color="black" class="opz-key-background black-key"></div>
+      <div color="white" class="opz-key-background white-key"></div>
+      <div class="opz-key-background"></div>
+      <div color="white" class="opz-key-background white-key"></div>
+      <div color="black" class="opz-key-background black-key"></div>
+      <div color="white" class="opz-key-background white-key"></div>
+      <div color="black" class="opz-key-background black-key"></div>
+      <div color="white" class="opz-key-background white-key" style="margin-right: 1.7857%"></div>
     </div>
   </div>
 
