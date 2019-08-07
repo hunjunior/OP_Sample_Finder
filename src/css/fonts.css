@@ -1,0 +1,19 @@
+@font-face {
+    font-family: "TE20L";
+    src: url("fonts/TE20L.woff") format('woff');
+}
+
+@font-face {
+    font-family: "TE20T";
+    src: url("fonts/TE20T.woff") format('woff');
+}
+
+@font-face {
+    font-family: "TE40L";
+    src: url("fonts/TE40L.woff") format('woff');
+}
+
+@font-face {
+    font-family: "TE40T";
+    src: url("fonts/TE40T.woff") format('woff');
+}

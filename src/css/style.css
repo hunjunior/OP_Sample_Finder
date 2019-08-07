@@ -1,6 +1,8 @@
 body {
-    background-color: #58595F;
+    background-color: #2f2b2b;
     color: #C7C7C7;
+    font-family: TE20T;
+    margin: 0;
 }
 
 #waveform-final region {
@@ -28,6 +30,7 @@ button, select{
     margin: 5px;
     border-color: white;
     color: white;
+    font-family: TE20T;
 }
 
 button:disabled {
@@ -43,6 +46,60 @@ option {
     color: black;
 }
 
+#app-content {
+    filter: blur(5px);
+    margin: 1vh 1vw;
+    position: absolute;
+}
+
+#cover {
+ height: 100vh;
+ width: 100vw;
+ position: absolute;
+ z-index: 5;
+ opacity: 0.5;
+ background: black;
+ display: block
+}
+
+  
+@keyframes spin {
+0% { transform: rotate(0deg); }
+100% { transform: rotate(360deg); }
+}
+
+#loader-container {
+    margin: 35vh auto 0 auto;
+    width: 15vw;
+}
+
+#loader-msg {
+    width: 30vw;
+    margin: 2vh auto;
+    font-size: large;
+    text-align: center;
+    font-weight: bold;
+}
+
+#te-t {
+    background: url('../images/te-logo-T.png');
+    width: 7vw;
+    height: 7vw;
+    background-size: contain;
+    background-repeat: no-repeat;
+    display: inline-block;
+}
+
+#te-o {
+    background: url('../images/te-logo-O.png');
+    width: 7vw;
+    height: 6.0828vw;
+    background-size: contain;
+    background-repeat: no-repeat;
+    animation: spin 2s linear infinite;
+    display: inline-block;
+}
+
 #sample-counter {
     font-size: larger;
     padding: 0 150px;
@@ -50,7 +107,7 @@ option {
 }
 
 #panel-0 {
-    width: 100%;
+    width: 99vw;
     height: 10vh;
 }
 
@@ -126,7 +183,8 @@ option {
 }
 
 .white-key {
-    background-color: #58595F;
+    background-color: #C7C7C7;
+    /* background-color: #2f2b2b; */
     /* background-color: #4e6d49; */
 }
 
@@ -152,6 +210,16 @@ option {
     align-items: center;
     justify-content: center;
     cursor: pointer;
+}
+
+#logo-container {
+    background: url(../images/te-logo.png);
+    width: 10vw;
+    height: 8vh;
+    display: inline-block;
+    background-size: contain;
+    background-repeat: no-repeat;
+    vertical-align: top;
 }
 
 #sample-btn-holder {
@@ -207,4 +275,15 @@ wave::-webkit-scrollbar-thumb {
     background-color: #518e53;
 
 }
+
+
+
+
+
+
+
+
+
+
+
 

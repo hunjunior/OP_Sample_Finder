@@ -2,8 +2,10 @@ from __future__ import print_function
 from melodic_processing import find_melodic_samples
 from melodic_processing import matrix_to_samples
 from drum_processing import find_drum_samples
+from drum_classification import predict_drum_classes
 import sys
 import zerorpc
+import tensorflow as tf
 
 
 
@@ -12,6 +14,7 @@ class AudioProcessingAPI(object):
     msg = 'Processing...'
     similarityMatrix = []
     times = []
+    model = ""
 
     def echo(self, text):
         return text
@@ -48,6 +51,30 @@ class AudioProcessingAPI(object):
         print(self.msg)
         sys.stdout.flush()
         arr = find_drum_samples(file_path)
+        sys.stdout.flush()
+        return arr
+
+    def loadModel(self):
+        print("LOADING THE MODEL...")
+        sys.stdout.flush()
+        MODEL_PATH = "/media/data/Junior/Documents/PythonProjects/te_sample_finder/src/pyaudioapi/fft-model_2019-06-11_17:24:00.model"
+        try:
+            self.model = tf.keras.models.load_model(MODEL_PATH)
+            print("MODEL LOADED")
+            sys.stdout.flush()
+            return True
+        except Exception as e:
+            print("Model loading error:")
+            print(e)
+            sys.stdout.flush()
+            return False
+        
+    
+    def getDrumClasses(self, file_path, temp_dir, time_array):
+        print("STARTED DRUM CLASSES PREDICTION")
+        print(file_path)
+        sys.stdout.flush()
+        arr = predict_drum_classes(file_path, temp_dir, time_array, self.model)
         sys.stdout.flush()
         return arr
 

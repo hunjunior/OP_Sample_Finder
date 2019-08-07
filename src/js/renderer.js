@@ -5,11 +5,27 @@ const AudioContext = require('web-audio-api').AudioContext;
 const fileType = require('file-type');
 const toWav = require('audiobuffer-to-wav');
 const path = require('path');
+const ffmpeg = require('fluent-ffmpeg');
+
+
+
+////////////////// UI elements ////////////////////////
+
+let wavesurferElement = document.querySelector('#waveform');
+let wavesurferZoomElement = document.querySelector('#waveform-zoom');
+let wavesurferFinalElement = document.querySelector('#waveform-final');
+
+let appContent = document.querySelector('#app-content');
+let cover = document.querySelector('#cover');
+let loaderMsg = document.querySelector('#loader-msg');
+
+
 
 
 ///////////////////// ZERO RPC SERVER SETUP /////////////////////
 let client = new zerorpc.Client({
-  heartbeatInterval: 14000
+  timeout: 60,
+  heartbeatInterval: 60000
 })
 
 client.connect("tcp://127.0.0.1:4242")
@@ -21,6 +37,19 @@ client.invoke("echo", "server ready", (error, res) => {
     console.log("server is ready")
   }
 })
+
+
+
+///////////////////// LOADING THE MODEL /////////////////////
+
+startLoader("Loading the AI model...")
+
+client.invoke("loadModel", (error, res) => {
+  console.log(res);
+  stopLoader();
+})
+
+
 
 ///////////////////// Playground ////////////////////////////////
 
@@ -81,6 +110,7 @@ function onMIDIFailure() {
 } */
 
 
+
 //////////////////// Buttons and on-click methods ///////////////////////////
 
 let getLoopSamplesBtn = document.querySelector('#get-loop-samples-btn');
@@ -108,7 +138,6 @@ keyElements.forEach((element, index) => {
 
 let saveSampleBtn = document.querySelector('#save-sample-btn');
 saveSampleBtn.onclick = saveSample;
-
 
 
 
@@ -188,14 +217,6 @@ function keyUpHandle(event) {
     if (currentView == "final") deleteCurrentFinalRegion();
   }
 }
-
-
-////////////////// Other UI elements ////////////////////////
-
-let wavesurferElement = document.querySelector('#waveform');
-let wavesurferZoomElement = document.querySelector('#waveform-zoom');
-let wavesurferFinalElement = document.querySelector('#waveform-final');
-
 
 ////////////////// Variables and constants ///////////////////
 
@@ -311,6 +332,7 @@ wavesurfer.on("ready", function () {
     selectCurrentRegion();
   }
   songLength = wavesurfer.getDuration();
+  stopLoader();
 });
 
 wavesurferFinal.on("ready", function () {
@@ -344,20 +366,17 @@ function addKeyToFinalRegion(region, key) {
 
 function updateKeyColors() {
   keyElements.forEach((keyElement) => {
-    if (keyElement.getAttribute("color") == "black") keyElement.style.backgroundColor = "#C7C7C7";
-    else keyElement.style.backgroundColor = "#58595F";
+    keyElement.style.backgroundColor = "#C7C7C7";
   });
 
   finalRegions.forEach((region) => {
     if (region.key != -1) {
-      if (keyElements[region.key].getAttribute("color") == "black") keyElements[region.key].style.backgroundColor = "#e49898";
-      else keyElements[region.key].style.backgroundColor = "#8e4646";
+      keyElements[region.key].style.backgroundColor = "#e49898";
     }
   })
 
   if (currentFinalRegion) {
-    if (keyElements[currentFinalRegion.key].getAttribute("color") == "black") keyElements[currentFinalRegion.key].style.backgroundColor = "#89bd82";
-    else keyElements[currentFinalRegion.key].style.backgroundColor = "#4e6d49";
+    keyElements[currentFinalRegion.key].style.backgroundColor = "#89bd82";
   }
 }
 
@@ -367,7 +386,7 @@ function getFinalRegionByKey(key) {
   else return null;
 }
 
-function loadSamples(error, res, newMatrix) {
+function loadSamples(error, res, newMatrix, isDrumSample) {
   document.querySelectorAll("button").forEach((btn) => btn.disabled = false);
   if (error) {
     console.error(error);
@@ -387,6 +406,7 @@ function loadSamples(error, res, newMatrix) {
       if (wavesurferReady) {
         addAllRegions();
         selectCurrentRegion();
+        if(isDrumSample) getDrumClasses();
       }
     } else {
       disableSampleButtons();
@@ -398,24 +418,54 @@ function loadSamples(error, res, newMatrix) {
 function getLoopSamples() {
   if (filePath) {
     pauseSample();
+    startLoader("Searching for loop samples...");
     let treshold = Number(document.querySelector("#treshold-select").value);
     console.log(treshold);
     document.querySelector("#loading-msg").innerHTML = "Processing...";
     document.querySelectorAll("button").forEach((btn) => btn.disabled = true);
     if (newFileUpload || !matrixLoaded) {
-      client.invoke("getArray", filePath, treshold, (error, res) => loadSamples(error, res, true))
+      client.invoke("getArray", filePath, treshold, (error, res) => {
+        stopLoader();
+        loadSamples(error, res, true, false)
+      })
     } else {
-      client.invoke("getNewArray", treshold, (error, res) => loadSamples(error, res, false))
+      client.invoke("getNewArray", treshold, (error, res) => {
+        stopLoader();
+        loadSamples(error, res, false, false)
+      })
     }
   }
+}
+
+function getDrumClasses() {
+  let times_array = [];
+  let tempDir = path.resolve('./temp');
+
+  regions.forEach((region) => {
+    let tempTimes = [0,0];
+    tempTimes[0] = region.start;
+    tempTimes[1] = region.end;
+    times_array.push(tempTimes);
+  })
+  
+  startLoader("Predicting drum classes...");
+  
+  client.invoke("getDrumClasses", filePath, tempDir, times_array, (error, res) => {
+    console.log(res);
+    stopLoader();
+  })
+
 }
 
 function getDrumSamples() {
   if (filePath) {
     pauseSample();
+    startLoader("Searching for drum samples...");
     document.querySelector("#loading-msg").innerHTML = "Processing...";
     document.querySelectorAll("button").forEach((btn) => btn.disabled = true);
-    client.invoke("getDrumSamples", filePath, (error, res) => loadSamples(error, res, false))
+    client.invoke("getDrumSamples", filePath, (error, res) => {
+      loadSamples(error, res, false, true);
+    })
   }
 }
 
@@ -424,6 +474,7 @@ document.querySelector('#file-upload').onchange = function () {
 }
 
 function handleNewFile(newFilePath) {
+  startLoader("Converting the audio file...");
   filePath = newFilePath;
   convertToWav(filePath, async (convertedFilePath, errorMsg) => {
     if (errorMsg) {
@@ -449,6 +500,17 @@ function handleNewFile(newFilePath) {
   })
 }
 
+function startLoader(msg) {
+  cover.style.display = "block";
+  appContent.style.filter = "blur(5px)";
+  loaderMsg.innerHTML = msg;
+}
+
+function stopLoader() {
+  cover.style.display = "none";
+  appContent.style.filter = "blur(0)";
+}
+
 function addSample() {
   if (currentZoomRegion) {
 
@@ -470,9 +532,91 @@ function addSample() {
 };
 
 function saveSample() {
-  if(finalRegions.length) {
-    getOpzObject((obj) => console.log(obj));
+  if (finalRegions.length) {
+    getOpzObject((obj) => {
+      console.log(obj);
+
+      let date = new Date();
+      let isoDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString();
+      let outputDir = "./temp/OP-Z_join_" + isoDate + ".aiff";
+
+      convertFile(finalFilePath, outputDir, (success, error) => {
+        if (error) {
+          alert(error);
+        } else {
+          //sendSuccess(success);
+          joinJSONtoAIFF(outputDir, obj, (resultDir) => {
+
+          })
+        }
+      })
+
+    });
   }
+}
+
+function convertFile(inputPath, outputPath, callback) {
+  let inMedia = path.resolve("" + inputPath + "");
+  let outMedia = path.resolve("" + outputPath + "");
+  console.log("Transcoding: " + inputPath + " > " + outputPath);
+
+  var command = ffmpeg(inMedia).addOptions([
+    '-preset veryslow'
+  ]);
+
+  command.save(outMedia).audioFilters(
+    {
+      filter: 'silencedetect',
+      options: { n: '-50dB', d: 5 }
+    }
+  )
+    .on('error', function (err) {
+      callback(null, 'Cannot process file: ' + err.message);
+    })
+    .on('end', function () {
+      callback('Processing finished successfully', null);
+    });
+}
+
+function joinJSONtoAIFF(aiffPath, obj, callback) {
+  fs.readFile(aiffPath, (err, buf) => {
+    if (err) throw err;
+
+    let startBuf = Buffer.from(new Uint8Array([0x41, 0x50, 0x50, 0x4c]));
+    let json = "op-1" + JSON.stringify(obj);
+
+    json += String.fromCharCode(0x0a);
+    if (json.length % 2 !== 0) {
+      json += " ";
+    }
+    let jsonBuf = Buffer.from(json);
+    let lenBuf = Buffer.alloc(4);
+    lenBuf.writeInt32BE(jsonBuf.length);
+
+    let applBuf = Buffer.concat([startBuf, lenBuf, jsonBuf]);
+
+    let sndPos = buf.indexOf("SSND");
+    let output = Buffer.alloc(buf.length + applBuf.length);
+    //console.log("SSND position: " + sndPos);
+
+    buf.copy(output, 0, 0, sndPos);
+    applBuf.copy(output, sndPos);
+    buf.copy(output, sndPos + applBuf.length, sndPos);
+    let blob = new Blob([output], { type: "audio/x-aiff; charset=binary" });
+
+    let date = new Date();
+    let isoDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString();
+    let outputDir = "./outputs/OP-Z_JSON_" + isoDate + ".aif";
+
+    //FileSaver.saveAs(blob, outputDir + fileName);
+
+    var fileReader = new FileReader();
+    fileReader.onload = function () {
+      fs.writeFileSync(outputDir, Buffer.from(new Uint8Array(this.result)));
+      callback(outputDir);
+    };
+    fileReader.readAsArrayBuffer(blob);
+  });
 }
 
 function playPauseSample() {
@@ -516,7 +660,6 @@ function stepNext() {
       currentFinalRegionIndex = 0;
     }
     selectCurrentFinalRegion();
-    updateKeyColors();
   }
 }
 
@@ -533,7 +676,6 @@ function stepPrev() {
       currentFinalRegionIndex = finalRegions.length - 1;
     }
     selectCurrentFinalRegion();
-    updateKeyColors();
   }
 }
 
@@ -642,8 +784,6 @@ function addFinalRegion(startSec, endSec) {
   currentFinalRegionIndex = finalRegions.length - 1
 
   selectCurrentFinalRegion()
-
-  updateKeyColors();
 }
 
 function updateFinalTime(endSec) {
@@ -733,6 +873,8 @@ function selectCurrentFinalRegion() {
   let endSec = currentFinalRegion.end;
 
   if (isSamplePlaying) wavesurferFinal.play(startSec, endSec);
+
+  updateKeyColors();
 
 }
 
@@ -883,6 +1025,8 @@ function deleteCurrentFinalRegion() {
     if (err) {
       console.log(err);
     } else {
+      availableFinalKeys.push(currentFinalRegion.key);
+
       if (finalRegions.length > 1) {
         if (currentFinalRegionIndex == finalRegions.length - 1) {
           finalRegions.pop();
@@ -908,9 +1052,12 @@ function deleteCurrentFinalRegion() {
         wavesurferFinal.clearRegions();
         wavesurferFinal.empty();
         selectView("primary");
+        updateKeyColors();
       }
+
     }
   })
+
 }
 
 async function deleteFromFile(filePath, baseLength, startIndex, endIndex, callback) {
