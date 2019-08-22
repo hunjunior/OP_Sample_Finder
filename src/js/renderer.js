@@ -19,6 +19,10 @@ let appContent = document.querySelector('#app-content');
 let cover = document.querySelector('#cover');
 let loaderMsg = document.querySelector('#loader-msg');
 
+let cover_2 = document.querySelector('#cover-2');
+let createdSampleMsg = document.querySelector('#created-sample-msg');
+
+
 
 
 
@@ -42,7 +46,7 @@ client.invoke("echo", "server ready", (error, res) => {
 
 ///////////////////// LOADING THE MODEL /////////////////////
 
-startLoader("Loading the AI model...")
+startLoader("<b>Loading the AI model...</b><br>AIモデルを読み込む...");
 
 client.invoke("loadModel", (error, res) => {
   console.log(res);
@@ -51,7 +55,7 @@ client.invoke("loadModel", (error, res) => {
 
 
 
-///////////////////// Playground ////////////////////////////////
+///////////////////// Drag & drop file upload ////////////////////////////////
 
 document.querySelectorAll("button, select, #file-upload").forEach(function (item) {
   item.addEventListener('focus', function () {
@@ -74,6 +78,10 @@ document.body.ondrop = (ev) => {
   handleNewFile(ev.dataTransfer.files[0].path)
   ev.preventDefault();
 }
+
+
+
+///////////////////// Playground ////////////////////////////////
 
 /* navigator.requestMIDIAccess()
   .then(onMIDISuccess, onMIDIFailure);
@@ -139,6 +147,8 @@ keyElements.forEach((element, index) => {
 let saveSampleBtn = document.querySelector('#save-sample-btn');
 saveSampleBtn.onclick = saveSample;
 
+let createdSampleExit = document.querySelector('#created-sample-exit');
+createdSampleExit.onclick = hideCreatedMsg;
 
 
 /////////////////// KEY events //////////////////////////////
@@ -245,6 +255,9 @@ for (let i = 0; i < 24; i++) availableFinalKeys.push(i);
 var selectedWavesurfer = null;
 
 var currentView = "primary";
+
+var drumCategories = ["Kick", "Snare", "Clap", "Closed Hi-Hat", "Open Hi-Hat"];
+var drumPrediction = [];
 
 var currentRegion = null;
 var currentZoomRegion = null;
@@ -418,7 +431,8 @@ function loadSamples(error, res, newMatrix, isDrumSample) {
 function getLoopSamples() {
   if (filePath) {
     pauseSample();
-    startLoader("Searching for loop samples...");
+    startLoader("<b>Searching for loop samples...</b><br>ループサンプルの検索...");
+    drumPrediction = [];
     let treshold = Number(document.querySelector("#treshold-select").value);
     console.log(treshold);
     document.querySelector("#loading-msg").innerHTML = "Processing...";
@@ -448,10 +462,12 @@ function getDrumClasses() {
     times_array.push(tempTimes);
   })
   
-  startLoader("Predicting drum classes...");
+  startLoader("<b>Predicting drum classes...</b><br>ドラムクラスの予測...");
   
   client.invoke("getDrumClasses", filePath, tempDir, times_array, (error, res) => {
     console.log(res);
+    drumPrediction = res;
+    updateDrumClass(drumPrediction[currentTimeValsIndex][0],drumPrediction[currentTimeValsIndex][1]);
     stopLoader();
   })
 
@@ -460,7 +476,7 @@ function getDrumClasses() {
 function getDrumSamples() {
   if (filePath) {
     pauseSample();
-    startLoader("Searching for drum samples...");
+    startLoader("<b>Searching for drum samples...</b><br>ドラムサンプルの検索...");
     document.querySelector("#loading-msg").innerHTML = "Processing...";
     document.querySelectorAll("button").forEach((btn) => btn.disabled = true);
     client.invoke("getDrumSamples", filePath, (error, res) => {
@@ -473,16 +489,38 @@ document.querySelector('#file-upload').onchange = function () {
   if (this.files[0]) handleNewFile(this.files[0].path)
 }
 
+function updateSampleCntr() {
+  let N = regions.length;
+  let i = currentTimeValsIndex + 1;
+  document.querySelector('#sample-cntr').innerHTML = i + " / " + N;
+}
+
+function updateDrumClass(index, percentage) {
+  let msg = '';
+  if(index == -1) msg = "Loop sample"
+  else if(percentage < 70) msg = "Unknown drum category"
+  else msg = drumCategories[index] + " [" + Math.round(percentage) + " %]"
+  document.querySelector('#drum-class').innerHTML = msg;
+}
+
+
+
 function handleNewFile(newFilePath) {
-  startLoader("Converting the audio file...");
+  startLoader("<b>Converting the audio file...</b><br>オーディオファイルの変換...");
   filePath = newFilePath;
   convertToWav(filePath, async (convertedFilePath, errorMsg) => {
     if (errorMsg) {
-      document.querySelector('#upload-msg').innerHTML = errorMsg;
+      document.querySelector('#loading-msg').innerHTML = errorMsg;
     } else {
-
       document.querySelector('#upload-field-msg').innerHTML = newFilePath.split('/').pop();
 
+      timeVals = []; 
+      regions = [];
+      wavesurfer.clearRegions();
+
+      document.querySelector('#drum-class').innerHTML = "";
+      document.querySelector('#sample-cntr').innerHTML = "";
+      
       filePath = convertedFilePath;
       newFileUpload = true;
       matrixLoaded = false;
@@ -493,6 +531,7 @@ function handleNewFile(newFilePath) {
       currentBufferData = buffer.getChannelData(0);
 
       wavesurfer.load(filePath);
+
       wavesurferZoom.load(filePath);
 
       selectView("primary");
@@ -546,13 +585,26 @@ function saveSample() {
         } else {
           //sendSuccess(success);
           joinJSONtoAIFF(outputDir, obj, (resultDir) => {
-
+            showCreatedMsg(resultDir);
           })
         }
       })
 
     });
   }
+}
+
+function showCreatedMsg(dir) {
+  let msg = "Your kit file is successfuly created!<br>Find here:<br>" + dir;
+
+  cover_2.style.display = "block";
+  appContent.style.filter = "blur(5px)";
+  createdSampleMsg.innerHTML = msg;
+}
+
+function hideCreatedMsg() {
+  cover_2.style.display = "none";
+  appContent.style.filter = "blur(0)";
 }
 
 function convertFile(inputPath, outputPath, callback) {
@@ -749,6 +801,7 @@ function selectView(view) {
 function addAllRegions() {
   regions = [];
   wavesurfer.clearRegions();
+
   timeVals.forEach((timeElem) => {
     let startSec = timeElem[0];
     let endSec = timeElem[1];
@@ -840,6 +893,11 @@ function selectCurrentRegion() {
 
   currentRegion = regions[currentTimeValsIndex]
 
+  if(drumPrediction.length) updateDrumClass(drumPrediction[currentTimeValsIndex][0],drumPrediction[currentTimeValsIndex][1]);
+  else updateDrumClass(-1, 0)
+
+  updateSampleCntr();
+  
   if (isSamplePlaying) currentRegion.update({ drag: false, resize: false, color: 'rgba(255,255,51,0.3)' });
   else currentRegion.update({ drag: true, resize: true, color: 'rgba(255,255,51,0.3)' });
 
