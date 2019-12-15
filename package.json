@@ -9,14 +9,13 @@
     "rebuild": "electron-rebuild -v 5.0.0"
   },
   "author": "David Pituk",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "electron": "^5.0.0",
     "electron-rebuild": "^1.8.5"
   },
   "dependencies": {
     "audiobuffer-to-wav": "^1.0.0",
-    "file-saver": "^2.0.2",
     "file-type": "^11.0.0",
     "fluent-ffmpeg": "^2.1.2",
     "web-audio-api": "^0.2.2",

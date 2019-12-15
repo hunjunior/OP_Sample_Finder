@@ -6,7 +6,7 @@ from drum_classification import predict_drum_classes
 import sys
 import zerorpc
 import tensorflow as tf
-
+import os
 
 
 class AudioProcessingAPI(object):
@@ -16,6 +16,9 @@ class AudioProcessingAPI(object):
     times = []
     model = ""
 
+    model_file_path = os.path.dirname(__file__)
+    model_file_path = os.path.join(model_file_path, 'fft-model.model')
+
     def echo(self, text):
         return text
 
@@ -23,7 +26,6 @@ class AudioProcessingAPI(object):
         """echo any text"""
         print("STARTED")
         print(self.msg)
-        self.msg = 'hahaha'
         print('Threshold: ', thrshld)
         print(type(thrshld))
         sys.stdout.flush()
@@ -57,7 +59,9 @@ class AudioProcessingAPI(object):
     def loadModel(self):
         print("LOADING THE MODEL...")
         sys.stdout.flush()
-        MODEL_PATH = "/media/data/Junior/Documents/PythonProjects/te_sample_finder/src/pyaudioapi/fft-model_2019-06-11_17:24:00.model"
+
+        MODEL_PATH = self.model_file_path
+        
         try:
             self.model = tf.keras.models.load_model(MODEL_PATH)
             print("MODEL LOADED")
