@@ -76,6 +76,7 @@ const getScriptPath = () => {
   if (process.platform === 'win32') {
     return path.join(__dirname, PY_DIST_FOLDER, PY_MODULE, PY_MODULE + '.exe')
   }
+  console.log("Using DIST");
   return path.join(__dirname, PY_DIST_FOLDER, PY_MODULE, PY_MODULE)
 }
 
@@ -91,7 +92,7 @@ const createPyProc = () => {
   if (guessPackaged()) {
     pyProc = require('child_process').execFile(script, [port])
   } else {
-    pyProc = require('child_process').spawn('python', [script, port])
+    pyProc = require('child_process').spawn('./op_venv/bin/python3.7', [script, port])
   }
 
   if (pyProc != null) {
@@ -100,6 +101,9 @@ const createPyProc = () => {
     pyProc.stdout.setEncoding("utf8");
     pyProc.stdout.on("data", data => {
       console.log(data);
+    });
+    pyProc.on('error', (err) => {
+      console.error(err);
     });
   }
 }

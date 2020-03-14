@@ -4,6 +4,8 @@ from scipy.io import wavfile
 import numpy as np
 import math
 
+
+
 def get_array_energy(input_array):
     energy = 0
     for i in range(0, len(input_array)):

@@ -1,4 +1,5 @@
 ///////////////////// IMPORTS /////////////////////////////
+
 const zerorpc = require("zerorpc");
 const fs = require('fs');
 const AudioContext = require('web-audio-api').AudioContext;
@@ -6,6 +7,49 @@ const fileType = require('file-type');
 const toWav = require('audiobuffer-to-wav');
 const path = require('path');
 const ffmpeg = require('fluent-ffmpeg');
+
+
+
+////////////////// Variables and constants ///////////////////
+
+const MAX_FILE_SIZE = 30; // max file size in MB
+const MODEL_DIR = './ai_model/fft-model.model'
+
+let newFileUpload = false;
+let matrixLoaded = false;
+let filePath = "";
+let timeVals = [];
+let regions = [];
+var currentTimeValsIndex = -1;
+var maxIndex = -1;
+var isSamplePlaying = false;
+var loopPlaying = false;
+var wavesurferReady = false;
+var songLength = 0;
+
+var currentFinalRegionIndex = -1;
+var finalFilePath = "";
+var finalBaseLength = 0;
+var currentBufferData = [];
+var finalRegions = [];
+var availableFinalKeys = [];
+for (let i = 0; i < 24; i++) availableFinalKeys.push(i);
+
+var selectedWavesurfer = null;
+
+var currentView = "primary";
+
+var drumCategories = ["Kick", "Snare", "Clap", "Closed Hi-Hat", "Open Hi-Hat"];
+var drumPrediction = [];
+
+var currentRegion = null;
+var currentZoomRegion = null;
+var currentFinalRegion = null;
+
+var selectedCurrentRegion = null;
+var wavesurfer = null;
+var wavesurferZoom = null;
+var wavesurferFinal = null;
 
 
 
@@ -24,9 +68,8 @@ let createdSampleMsg = document.querySelector('#created-sample-msg');
 
 
 
-
-
 ///////////////////// ZERO RPC SERVER SETUP /////////////////////
+
 let client = new zerorpc.Client({
   timeout: 60,
   heartbeatInterval: 60000
@@ -47,8 +90,10 @@ client.invoke("echo", "server ready", (error, res) => {
 ///////////////////// LOADING THE MODEL /////////////////////
 
 startLoader("<b>Loading the AI model...</b><br>AIモデルを読み込む...");
+let currentModelDir = path.resolve(MODEL_DIR);
+console.log(currentModelDir);
 
-client.invoke("loadModel", (error, res) => {
+client.invoke("loadModel",currentModelDir, (error, res) => {
   console.log(res);
   stopLoader();
 })
@@ -151,6 +196,7 @@ let createdSampleExit = document.querySelector('#created-sample-exit');
 createdSampleExit.onclick = hideCreatedMsg;
 
 
+
 /////////////////// KEY events //////////////////////////////
 
 document.addEventListener('keydown', keyDownHandle);
@@ -228,45 +274,9 @@ function keyUpHandle(event) {
   }
 }
 
-////////////////// Variables and constants ///////////////////
 
-const MAX_FILE_SIZE = 30; // max file size in MB
 
-let newFileUpload = false;
-let matrixLoaded = false;
-let filePath = "";
-let timeVals = [];
-let regions = [];
-var currentTimeValsIndex = -1;
-var maxIndex = -1;
-var isSamplePlaying = false;
-var loopPlaying = false;
-var wavesurferReady = false;
-var songLength = 0;
 
-var currentFinalRegionIndex = -1;
-var finalFilePath = "";
-var finalBaseLength = 0;
-var currentBufferData = [];
-var finalRegions = [];
-var availableFinalKeys = [];
-for (let i = 0; i < 24; i++) availableFinalKeys.push(i);
-
-var selectedWavesurfer = null;
-
-var currentView = "primary";
-
-var drumCategories = ["Kick", "Snare", "Clap", "Closed Hi-Hat", "Open Hi-Hat"];
-var drumPrediction = [];
-
-var currentRegion = null;
-var currentZoomRegion = null;
-var currentFinalRegion = null;
-
-var selectedCurrentRegion = null;
-var wavesurfer = null;
-var wavesurferZoom = null;
-var wavesurferFinal = null;
 
 clearTempDir();
 

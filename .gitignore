@@ -10,3 +10,6 @@ temp/
 outputs/
 
 *.pyc
+
+op_venv/
+

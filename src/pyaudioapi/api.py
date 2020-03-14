@@ -1,4 +1,3 @@
-from __future__ import print_function
 from melodic_processing import find_melodic_samples
 from melodic_processing import matrix_to_samples
 from drum_processing import find_drum_samples
@@ -8,16 +7,12 @@ import zerorpc
 import tensorflow as tf
 import os
 
-
 class AudioProcessingAPI(object):
 
     msg = 'Processing...'
     similarityMatrix = []
     times = []
     model = ""
-
-    model_file_path = os.path.dirname(__file__)
-    model_file_path = os.path.join(model_file_path, 'fft-model.model')
 
     def echo(self, text):
         return text
@@ -56,15 +51,16 @@ class AudioProcessingAPI(object):
         sys.stdout.flush()
         return arr
 
-    def loadModel(self):
+    def loadModel(self, modelDir):
         print("LOADING THE MODEL...")
         sys.stdout.flush()
 
-        MODEL_PATH = self.model_file_path
+        MODEL_PATH = modelDir
         
         try:
             self.model = tf.keras.models.load_model(MODEL_PATH)
             print("MODEL LOADED")
+            print(sys.version)
             sys.stdout.flush()
             return True
         except Exception as e:

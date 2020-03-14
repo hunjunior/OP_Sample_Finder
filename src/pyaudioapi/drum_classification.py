@@ -43,7 +43,8 @@ def getDrumClass(timeValues, startIndex, endIndex, temp_img_dir, index, model):
 
     yf = fft(samples_for_fft)
 
-    xf_plot = np.linspace(0.0, 1.0 / (2.0 * T), N / 2)
+    xf_plot = np.linspace(0.0, 1.0 / (2.0 * T), N // 2)
+
     yf_plot = 2.0 / N * np.abs( yf[:N//2])
 
     xf_log_plot = []
@@ -65,11 +66,12 @@ def getDrumClass(timeValues, startIndex, endIndex, temp_img_dir, index, model):
 
     try:
         prediction = model.predict([img_resized])[0]
-        index = np.argmax(prediction)
+        index = int(np.argmax(prediction))
         percentage = int(prediction[index] * 10000) / 100.0
     except Exception as e:
         print("Image reading error:")
         print(e)
+        sys.stdout.flush()
     
     return [index, percentage]
 
@@ -78,22 +80,18 @@ def predict_drum_classes(wav_file_path, temp_dir, time_array, model):
 
     try:
         sample_rate, timeValues = wavfile.read(wav_file_path)
-    except Exception, e:
+    except Exception as e:
         print(e)
         return
     
+
     result_array = []
     for i in range(0, len(time_array)):
         startIndex = int(time_array[i][0] * 44100)
         endIndex = int(time_array[i][1] * 44100)
         result = getDrumClass(timeValues, startIndex, endIndex, temp_dir, i, model)
+        print(result)
+        sys.stdout.flush()
         result_array.append(result)
     
     return result_array
-
-    
-""" temp_dir = "/media/data/Junior/Documents/PythonProjects/te_sample_finder/temp"
-file_path = "/media/data/Junior/Documents/PythonProjects/te_sample_finder/temp/converted-2019-08-07T14:55:23.255Z.wav"
-times = [[0.10000000000000002, 0.6000000000000001], [28.2, 28.7], [30.1, 30.6], [60.10000000000001, 60.60000000000001], [60.50000000000001, 61.00000000000001], [61.550000000000004, 62.050000000000004], [62.95, 63.45], [63.300000000000004, 63.800000000000004], [64.9, 65.4], [66.65, 67.15], [68.55000000000001, 69.05000000000001], [69.35000000000001, 69.85000000000001], [69.95, 70.45], [83.7, 84.2], [85.75000000000001, 86.25000000000001], [97.00000000000001, 97.50000000000001], [98.55000000000001, 99.05000000000001], [140.6, 141.1], [144.2, 144.7], [172.5, 173], [192.4, 192.9], [254.05, 254.55], [300.05, 300.55]]
-
-print(predict_drum_classes(file_path, temp_dir, times)); """
