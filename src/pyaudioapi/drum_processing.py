@@ -3,6 +3,8 @@ from scipy.fftpack import fft
 from scipy.io import wavfile
 import numpy as np
 import math
+import os
+from spleeter.separator import Separator
 
 
 
@@ -55,7 +57,8 @@ def get_local_max_value_array(input_array, sec_per_sample, time_window):
 
 def get_max_peak_time_array(input_array, sec_per_sample):
     max_peak_time_array = []
-    limit_ratio = 0.2
+    #limit_ratio = 0.2
+    limit_ratio = 0.05
     #min_val = min(input_array)
     max_val = max(input_array)
     #limit_val = min_val + ((max_val - min_val) * limit_ratio)
@@ -102,7 +105,7 @@ def get_unique_max_peak_times(input_array, max_peak_time_array):
             is_unique = True
             for j in range(0, len(unique_spectrum_array)):
                 similarity = scipy.spatial.distance.cosine(spectrum_array[i], unique_spectrum_array[j])
-                if(similarity < 0.4):
+                if(similarity < 0.3):
                     is_unique = False
                     break
             if(is_unique):
@@ -133,8 +136,8 @@ def find_drum_samples(wav_file_path):
     ### Tangent values of the energy array
     tangent_array = get_tangent_array(energy_array, time_window)
 
-    #max_peak_time_array, limit_val = get_max_peak_time_array(tangent_array, time_window)
-    max_peak_time_array = get_max_peak_time_array_local(tangent_array, time_window)
+    max_peak_time_array, limit_val = get_max_peak_time_array(tangent_array, time_window)
+    #max_peak_time_array = get_max_peak_time_array_local(tangent_array, time_window)
 
     unique_time_array = get_unique_max_peak_times(samples, max_peak_time_array)
 
@@ -144,3 +147,31 @@ def find_drum_samples(wav_file_path):
             sample_start_end_time_array.append([(unique_time - 0.05), (unique_time + 0.45)])
 
     return sample_start_end_time_array
+
+def separate_drum_track(filepath):
+    fs, data = wavfile.read(filepath)
+    data = data / 32767.0
+
+    output_path = './temp/drums_track.wav'
+
+    #mono to stereo
+    if data[0].size == 1:
+        data =  [[i, i] for i in data]
+
+    data = np.array(data)
+
+    separator = Separator('spleeter:4stems')
+    results = separator.separate(data)
+
+    result_track = results['drums']
+
+    #stereo to mono
+    if result_track[0].size == 2:
+        result_track = result_track.sum(axis=1) / 2
+
+    result_track = result_track * 32767
+    result_track = np.asarray(result_track, dtype=np.int16)
+
+    wavfile.write(output_path, fs, result_track)
+    
+    return os.path.abspath(output_path)

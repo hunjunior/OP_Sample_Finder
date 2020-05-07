@@ -1,7 +1,6 @@
-zerorpc
-pyzmq
-future
-msgpack-python
-gevent
-pyinstaller
-pypiwin32
+scipy==1.2.1
+numpy==1.16.4
+matplotlib==2.2.4
+zerorpc==0.6.1
+opencv-python==4.1.0.25
+tensorflow==1.13.1

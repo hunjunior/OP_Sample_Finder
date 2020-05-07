@@ -18,6 +18,11 @@ const MODEL_DIR = './ai_model/fft-model.model'
 let newFileUpload = false;
 let matrixLoaded = false;
 let filePath = "";
+let trackFilePaths = {
+  origin: '',
+  drums: '',
+  vocals: ''
+}
 let timeVals = [];
 let regions = [];
 var currentTimeValsIndex = -1;
@@ -71,8 +76,8 @@ let createdSampleMsg = document.querySelector('#created-sample-msg');
 ///////////////////// ZERO RPC SERVER SETUP /////////////////////
 
 let client = new zerorpc.Client({
-  timeout: 60,
-  heartbeatInterval: 60000
+  timeout: 180,
+  heartbeatInterval: 180000
 })
 
 client.connect("tcp://127.0.0.1:4242")
@@ -471,13 +476,19 @@ function getDrumClasses() {
     tempTimes[1] = region.end;
     times_array.push(tempTimes);
   })
+
+  console.log(regions);
   
   startLoader("<b>Predicting drum classes...</b><br>ドラムクラスの予測...");
   
-  client.invoke("getDrumClasses", filePath, tempDir, times_array, (error, res) => {
-    console.log(res);
-    drumPrediction = res;
-    updateDrumClass(drumPrediction[currentTimeValsIndex][0],drumPrediction[currentTimeValsIndex][1]);
+  client.invoke("getDrumClasses", trackFilePaths.drums, tempDir, times_array, (error, res) => {
+    if(error) {
+      console.log(error);
+    } else {
+      console.log(res);
+      drumPrediction = res;
+      updateDrumClass(drumPrediction[currentTimeValsIndex][0],drumPrediction[currentTimeValsIndex][1]);
+    }
     stopLoader();
   })
 
@@ -486,11 +497,18 @@ function getDrumClasses() {
 function getDrumSamples() {
   if (filePath) {
     pauseSample();
-    startLoader("<b>Searching for drum samples...</b><br>ドラムサンプルの検索...");
+    startLoader("<b>Separating the drum track...</b><br>ドラム...");
     document.querySelector("#loading-msg").innerHTML = "Processing...";
     document.querySelectorAll("button").forEach((btn) => btn.disabled = true);
-    client.invoke("getDrumSamples", filePath, (error, res) => {
-      loadSamples(error, res, false, true);
+    client.invoke("getDrumTrack", filePath, (error, drumTrackFilePath) => {
+      console.error(error);
+      startLoader("<b>Searching for drum samples...</b><br>ドラムサンプルの検索...");
+      trackFilePaths.drums = drumTrackFilePath;
+      wavesurfer.load(trackFilePaths.drums);
+      wavesurferZoom.load(trackFilePaths.drums)
+      client.invoke("getDrumSamples", trackFilePaths.drums, (error, res) => {
+        loadSamples(error, res, false, true);
+      })
     })
   }
 }
@@ -508,7 +526,7 @@ function updateSampleCntr() {
 function updateDrumClass(index, percentage) {
   let msg = '';
   if(index == -1) msg = "Loop sample"
-  else if(percentage < 70) msg = "Unknown drum category"
+  else if(percentage < 50) msg = "Unknown drum category"
   else msg = drumCategories[index] + " [" + Math.round(percentage) + " %]"
   document.querySelector('#drum-class').innerHTML = msg;
 }

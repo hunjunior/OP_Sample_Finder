@@ -1,6 +1,7 @@
 from melodic_processing import find_melodic_samples
 from melodic_processing import matrix_to_samples
 from drum_processing import find_drum_samples
+from drum_processing import separate_drum_track
 from drum_classification import predict_drum_classes
 import sys
 import zerorpc
@@ -50,6 +51,13 @@ class AudioProcessingAPI(object):
         arr = find_drum_samples(file_path)
         sys.stdout.flush()
         return arr
+    
+    def getDrumTrack(self, file_path):
+        print("DRUM SEPARATION")
+        sys.stdout.flush()
+        track_file_path = separate_drum_track(file_path)
+        sys.stdout.flush()
+        return track_file_path
 
     def loadModel(self, modelDir):
         print("LOADING THE MODEL...")
