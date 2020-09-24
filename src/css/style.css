@@ -296,7 +296,9 @@ option {
 }
 
 #melodic-btn-holder {
-
+    border: 1px solid white;
+    display: flex;
+    justify-content: space-between;
 }
 
 #waveform-zoom {

@@ -15,9 +15,9 @@
     "electron-rebuild": "^1.8.5"
   },
   "dependencies": {
+    "audiobuffer-to-aiff": "^1.0.0",
     "audiobuffer-to-wav": "^1.0.0",
-    "file-type": "^11.0.0",
-    "fluent-ffmpeg": "^2.1.2",
+    "file-type": "^11.1.0",
     "web-audio-api": "^0.2.2",
     "zerorpc": "^0.9.8"
   }

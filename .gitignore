@@ -5,10 +5,6 @@ node_modules/
 
 package-lock\.json
 
-temp/
-
-outputs/
-
 *.pyc
 
 op_venv/

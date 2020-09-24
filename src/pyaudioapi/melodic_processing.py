@@ -54,9 +54,17 @@ def matrix_similarity_euclidean(A,B):
 def find_melodic_samples(wav_file_path, threshold_spectrogram, threshold_similarity):
     sample_rate, samples = wavfile.read(wav_file_path)
 
+    print('----- Converted input data ------\n')
+    print(samples.shape)
+    print('Length: ' + str(len(samples)))
+    print('Rate: ' + str(sample_rate))
+    print('20 samples from the middle: ')
+    print(samples[(int(len(samples) / 2)) - 10 : (int(len(samples) / 2)) + 10 ])
+    print('------------- END ---------------\n')
+
     ### Get the spectrogram
     #frequencies, times, spectrogram = signal.spectrogram(samples, sample_rate)
-    frequencies, times, spectrogram = signal.spectrogram(samples, fs=sample_rate, nperseg=(sample_rate/4), noverlap=None)
+    frequencies, times, spectrogram = signal.spectrogram(samples, fs=sample_rate, nperseg=(int(sample_rate/4)), noverlap=None)
     
     maxTime = np.amax(times)
     minTime = np.amin(times)
@@ -105,10 +113,10 @@ def matrix_to_samples(similarityMatrix, times, threshold_similarity):
         minVal = np.amin(similarityM)
         deltaLog = maxVal - minVal
         thresholdLimit = (deltaLog * threshold_similarity) + minVal
+        print("TresholdLimit= " + str(thresholdLimit))
         
         ### Performing threshold
-        similarityM[similarityM <= thresholdLimit] = 1
-        similarityM[similarityM > thresholdLimit] = 0
+        similarityM = np.where((similarityM <= thresholdLimit), 1.0, 0.0)
 
         # finding diagonal lines which are longer than 3 units (~ 0.75 secs)
         rows = similarityM.shape[0]

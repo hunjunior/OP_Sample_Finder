@@ -1,0 +1,7 @@
+This folder should contain the following files:
+- checkpoint                  
+- model.data-00000-of-00001  
+- model.meta
+- model.index
+
+Files are available here after extracting: https://github.com/deezer/spleeter/releases/download/v1.4.0/4stems.tar.gz

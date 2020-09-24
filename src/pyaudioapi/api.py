@@ -1,3 +1,6 @@
+import timeit
+start = timeit.timeit()
+print("Timer start..")
 from melodic_processing import find_melodic_samples
 from melodic_processing import matrix_to_samples
 from drum_processing import find_drum_samples
@@ -5,7 +8,8 @@ from drum_processing import separate_drum_track
 from drum_classification import predict_drum_classes
 import sys
 import zerorpc
-import tensorflow as tf
+#import tensorflow as tf
+from tensorflow.python.keras.models import load_model
 import os
 
 class AudioProcessingAPI(object):
@@ -66,7 +70,8 @@ class AudioProcessingAPI(object):
         MODEL_PATH = modelDir
         
         try:
-            self.model = tf.keras.models.load_model(MODEL_PATH)
+            #self.model = tf.keras.models.load_model(MODEL_PATH)
+            self.model = load_model(MODEL_PATH)
             print("MODEL LOADED")
             print(sys.version)
             sys.stdout.flush()
@@ -98,6 +103,9 @@ def parse_port():
     return '{}'.format(port)
 
 def main():
+    print('Main() started.')
+    end = timeit.timeit()
+    print('Timer stop: ' + str(end - start))
     addr = 'tcp://127.0.0.1:' + parse_port()
     s = zerorpc.Server(AudioProcessingAPI())
     s.bind(addr)

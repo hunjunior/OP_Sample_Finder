@@ -2,128 +2,130 @@
 <html>
 
 <head>
-  <meta charset="UTF-8">
-  <title>OP Sample finder</title>
-  <link rel="stylesheet" href="../css/style.css">
-  <link rel="stylesheet" href="../css/fonts.css">
+    <meta charset="UTF-8">
+    <title>OP Sample finder</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/fonts.css">
 </head>
 
 <body>
 
-  <div id="cover">
-    <!-- <div id="loader"></div> -->
-    <div id="loader-container">
-      <div id="te-t"></div>
-      <div id="te-o"></div>
-    </div>
-    <div id="loader-msg"></div>
-  </div>
-
-  <div id="cover-2">
-    <div id="created-sample-window">
-      <div id="created-sample-exit">X</div>
-      <span id="created-sample-msg"></span>
-    </div>
-  </div>
-
-  <div id="app-content">
-      <div id="panel-0">
-          <div id="logo-container"></div>
-          <input type="file" id="file-upload" style="display: none">
-          <div style="display: inline-block">
-            <div id="upload-field">
-              <div style="text-align: center">
-                Click to open or drag&drop
-                <br>
-                <b>
-                  <span id="upload-field-msg"></span>
-                </b>
-              </div>
-            </div>
-          </div>
-          
-          <div id="regions-info">
-            <div id="loading-msg" class="info-msg"></div>
-            <div id="sample-cntr" class="info-msg"></div>
-            <div id="drum-class" class="info-msg"></div>
-          </div>
+    <div id="cover">
+        <!-- <div id="loader"></div> -->
+        <div id="loader-container">
+            <div id="te-t"></div>
+            <div id="te-o"></div>
         </div>
-      
-      
+        <div id="loader-msg"></div>
+    </div>
+
+    <div id="cover-2">
+        <div id="created-sample-window">
+            <div id="created-sample-exit">X</div>
+            <span id="created-sample-msg"></span>
+        </div>
+    </div>
+
+    <div id="app-content">
+        <div id="panel-0">
+            <div id="logo-container"></div>
+            <input type="file" id="file-upload" style="display: none">
+            <div style="display: inline-block">
+                <div id="upload-field">
+                    <div style="text-align: center">
+                        Click to open or drag&drop
+                        <br>
+                        <b>
+                            <span id="upload-field-msg"></span>
+                        </b>
+                    </div>
+                </div>
+            </div>
+
+            <div id="regions-info">
+                <div id="loading-msg" class="info-msg"></div>
+                <div id="sample-cntr" class="info-msg"></div>
+                <div id="drum-class" class="info-msg"></div>
+            </div>
+        </div>
+
+
         <div id="panel-1">
-          <div id="waveform"></div>
-          <div id="sample-btn-holder">
-            <div id="melodic-btn-holder">
-              <button id="get-loop-samples-btn" disabled>Loop samples</button>
-              <select id="treshold-select">
-                <option value=0.35>35%</option>
-                <option value=0.40>40%</option>
-                <option value=0.45>45%</option>
-                <option value=0.50 selected="selected">50%</option>
-                <option value=0.55>55%</option>
-                <option value=0.60>60%</option>
-              </select>
+            <div id="waveform"></div>
+            <div id="sample-btn-holder">
+                <div id="melodic-btn-holder">
+                    <button id="get-loop-samples-btn" disabled>Loop samples</button>
+                    <select id="treshold-select">
+                        <option value=0.35>35%</option>
+                        <option value=0.40>40%</option>
+                        <option value=0.45>45%</option>
+                        <option value=0.50 selected="selected">50%</option>
+                        <option value=0.55>55%</option>
+                        <option value=0.60>60%</option>
+                    </select>
+                </div>
+                <button id="get-drum-samples-btn" disabled>Drum samples</button>
             </div>
-            <button id="get-drum-samples-btn" disabled>Drum samples</button>
-          </div>
         </div>
-      
+
         <div id="panel-2">
-          <div id="waveform-zoom"></div>
-          <div id="keep-btn-holder">
-            <button id="keep-sample-btn" disabled>Add sample</button>
-            <div id="zoom-sample-length-msg">0.0 sec</div>
-          </div>
+            <div id="waveform-zoom"></div>
+            <div id="keep-btn-holder">
+                <button id="keep-sample-btn" disabled>Add sample</button>
+                <div id="zoom-sample-length-msg">0.0 sec</div>
+            </div>
         </div>
-      
+
         <div id="panel-3">
-          <div id="waveform-final"></div>
-          <div id="save-btn-holder">
-            <button id="save-sample-btn" disabled>Save</button>
-            <div id="final-sample-length-msg">0.0 / 12 sec</div>
-          </div>
+            <div id="waveform-final"></div>
+            <div id="save-btn-holder">
+                <button id="save-sample-btn" disabled>Save</button>
+                <div id="final-sample-length-msg">0.0 / 12 sec</div>
+            </div>
         </div>
-      
+
         <div id="panel-4">
-          <div id="opz-keyboard-layer-1">
-            <div id="opz-keyboard-layer-2"></div>
-            <div color="white" class="opz-key-background white-key" style="margin-left: 1.7857%"></div>
-            <div color="black" class="opz-key-background black-key"></div>
-            <div color="white" class="opz-key-background white-key"></div>
-            <div color="black" class="opz-key-background black-key"></div>
-            <div color="white" class="opz-key-background white-key"></div>
-            <div color="black" class="opz-key-background black-key"></div>
-            <div color="white" class="opz-key-background white-key"></div>
-            <div class="opz-key-background"></div>
-            <div color="white" class="opz-key-background white-key"></div>
-            <div color="black" class="opz-key-background black-key"></div>
-            <div color="white" class="opz-key-background white-key"></div>
-            <div color="black" class="opz-key-background black-key"></div>
-            <div color="white" class="opz-key-background white-key"></div>
-            <div class="opz-key-background"></div>
-            <div color="white" class="opz-key-background white-key"></div>
-            <div color="black" class="opz-key-background black-key"></div>
-            <div color="white" class="opz-key-background white-key"></div>
-            <div color="black" class="opz-key-background black-key"></div>
-            <div color="white" class="opz-key-background white-key"></div>
-            <div color="black" class="opz-key-background black-key"></div>
-            <div color="white" class="opz-key-background white-key"></div>
-            <div class="opz-key-background"></div>
-            <div color="white" class="opz-key-background white-key"></div>
-            <div color="black" class="opz-key-background black-key"></div>
-            <div color="white" class="opz-key-background white-key"></div>
-            <div color="black" class="opz-key-background black-key"></div>
-            <div color="white" class="opz-key-background white-key" style="margin-right: 1.7857%"></div>
-          </div>
+            <div id="opz-keyboard-layer-1">
+                <div id="opz-keyboard-layer-2"></div>
+                <div color="white" class="opz-key-background white-key" style="margin-left: 1.7857%"></div>
+                <div color="black" class="opz-key-background black-key"></div>
+                <div color="white" class="opz-key-background white-key"></div>
+                <div color="black" class="opz-key-background black-key"></div>
+                <div color="white" class="opz-key-background white-key"></div>
+                <div color="black" class="opz-key-background black-key"></div>
+                <div color="white" class="opz-key-background white-key"></div>
+                <div class="opz-key-background"></div>
+                <div color="white" class="opz-key-background white-key"></div>
+                <div color="black" class="opz-key-background black-key"></div>
+                <div color="white" class="opz-key-background white-key"></div>
+                <div color="black" class="opz-key-background black-key"></div>
+                <div color="white" class="opz-key-background white-key"></div>
+                <div class="opz-key-background"></div>
+                <div color="white" class="opz-key-background white-key"></div>
+                <div color="black" class="opz-key-background black-key"></div>
+                <div color="white" class="opz-key-background white-key"></div>
+                <div color="black" class="opz-key-background black-key"></div>
+                <div color="white" class="opz-key-background white-key"></div>
+                <div color="black" class="opz-key-background black-key"></div>
+                <div color="white" class="opz-key-background white-key"></div>
+                <div class="opz-key-background"></div>
+                <div color="white" class="opz-key-background white-key"></div>
+                <div color="black" class="opz-key-background black-key"></div>
+                <div color="white" class="opz-key-background white-key"></div>
+                <div color="black" class="opz-key-background black-key"></div>
+                <div color="white" class="opz-key-background white-key" style="margin-right: 1.7857%"></div>
+            </div>
         </div>
-  </div>
-  
-  <script src="https://unpkg.com/wavesurfer.js"></script>
-  <script src="https://unpkg.com/wavesurfer.js/dist/plugin/wavesurfer.regions.min.js"></script>
+    </div>
+
+    <!-- <script src="https://unpkg.com/wavesurfer.js"></script>
+    <script src="https://unpkg.com/wavesurfer.js/dist/plugin/wavesurfer.regions.min.js"></script> -->
+    <script src="../lib/wavesurfer.js"></script>
+    <script src="../lib/wavesurfer.regions.min.js"></script>
 </body>
 
 <script>
-  require('../js/renderer.js')
+    require('../js/renderer.js')
 </script>
 
 </html>
