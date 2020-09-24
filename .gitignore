@@ -5,7 +5,11 @@ node_modules/
 
 package-lock\.json
 
+temp/*
+
 *.pyc
 
 op_venv/
+
+pretrained_models/*
 
